@@ -1,0 +1,26 @@
+a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 156px;
+    height: 35px;
+    text-decoration: none;
+    border-radius: 5px;
+    background: rgba(65, 65, 65, 0.58);
+    color: white;
+}
+
+a:hover {
+    color: #FFEB39;
+}
+
+.headerNav{
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 1048px;
+    height: 61px;
+    background: #000000;
+    border-radius: 6px;
+}
