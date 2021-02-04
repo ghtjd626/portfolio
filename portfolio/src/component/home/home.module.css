@@ -1,0 +1,28 @@
+.home {
+    background: #3a3a3a;
+    height: 801px;
+    width: 100%;
+}
+
+.homeBackground{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    width: 1092px;
+    height: 595px;
+    background-image: url("./lapTop.svg");
+}
+
+.homeTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+}
+
+.homeText{
+    margin: 0;
+    font-size: 64px;
+    color: white;
+}
