@@ -15,12 +15,20 @@ a:hover {
 }
 
 .headerNav{
-    position: fixed;
+    position: absolute;
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 1048px;
     height: 61px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
     background: #000000;
     border-radius: 6px;
+    &topfirst {
+        position: absolute;
+    }
+    &topsecond {
+        position: fixed;
+        top: 0;
+    }
 }
