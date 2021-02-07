@@ -12,7 +12,7 @@ const Header = () => {
 
   document.addEventListener('scroll', () => {
     const currentScrollPercentage = getCurrentScrollPercentage();
-    if (currentScrollPercentage > 40) {
+    if (currentScrollPercentage > 30) {
       setIsHeaderTop(styles.TopSecond);
     } else {
       setIsHeaderTop(styles.TopFirst);
