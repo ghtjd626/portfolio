@@ -1,4 +1,49 @@
 .about {
-    height: 1200px;
-    background: antiquewhite;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 61px;
+    height: 801px;
+    padding-top: 80px;
+}
+
+.aboutTitle{
+    width: 114px;
+    height: 55px;
+    font-size: 36px;
+    font-weight: normal;
+    border-bottom: 3px solid #2D2D2D;
+}
+
+.aboutArea {
+    margin-top: 80px;
+    display: flex;
+    width: 500px;
+    justify-content: space-between;
+}
+
+.aboutProfile{
+    width: 232px;
+}
+
+.aboutImg{
+    width: 232px;
+    height: 232px;
+    background: #C7C7C7;
+    border-radius: 9px;
+}
+
+.aboutMyStory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 232px;
+    height: 54px;
+    border-radius: 9px;
+    background: #8A8989;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
 }

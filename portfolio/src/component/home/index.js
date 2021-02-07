@@ -5,7 +5,7 @@ import Header from '../header';
 const Home = () => {
   return (
     <>
-      <div className={styles.home}>
+      <div className={styles.home} id="home">
         <div className={styles.homeBackground}>
           <Header />
           <div className={styles.homeTitle}>

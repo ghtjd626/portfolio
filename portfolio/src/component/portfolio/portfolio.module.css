@@ -1,0 +1,17 @@
+.portfolio{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 61px;
+    height: 801px;
+    padding-top: 80px;
+    background: #EDEDED;
+}
+
+.portfolioTitle{
+    width: 185px;
+    height: 55px;
+    font-size: 36px;
+    font-weight: normal;
+    border-bottom: 3px solid #2D2D2D;
+}
