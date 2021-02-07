@@ -10,7 +10,7 @@ a{
     height: 35px;
     text-decoration: none;
     border-radius: 5px;
-    background: rgba(65, 65, 65, 0.58);
+    background: #414141;;
     color: white;
 }
 
@@ -19,26 +19,32 @@ a:hover {
     transition: color 0.5s;
 }
 
-.TopFirst {
+.headerNav{
     position: absolute;
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 1048px;
     height: 61px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-    background: #000000;
+    background: rgba(0, 0, 0, 0.83);
     border-radius: 6px;
-}
+    transition: 1s;
+    &Active{
+        position: fixed;
+        transition: 1s;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 1048px;
+        height: 61px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        background: #EDEDED;
+        border-radius: 6px;
+        a{
+            background: #C7C7C7;
+            color: #2D2D2D;
+            transition: 1s;
 
-.TopSecond {
-    position: fixed;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 1048px;
-    height: 61px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-    background: #000000;
-    border-radius: 6px;
+        }
+    }
 }

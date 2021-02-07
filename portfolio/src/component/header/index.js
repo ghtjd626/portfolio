@@ -2,26 +2,19 @@ import { useState } from 'react';
 import styles from './header.module.scss';
 
 const Header = () => {
-  const [isHeaderTop, setIsHeaderTop] = useState(styles.TopFirst);
-
-  const getCurrentScrollPercentage = () => {
-    return (
-      ((window.scrollY + window.innerHeight) / document.body.clientHeight) * 100
-    );
-  };
+  const [isHeaderTop, setIsHeaderTop] = useState(styles.headerNav);
 
   document.addEventListener('scroll', () => {
-    const currentScrollPercentage = getCurrentScrollPercentage();
-    if (currentScrollPercentage > 30) {
-      setIsHeaderTop(styles.TopSecond);
+    if (window.scrollY > 800) {
+      setIsHeaderTop(styles.headerNavActive);
     } else {
-      setIsHeaderTop(styles.TopFirst);
+      setIsHeaderTop(styles.headerNav);
     }
   });
 
   return (
     <>
-      <nav className={isHeaderTop}>
+      <nav className={isHeaderTop} style={{ position: isHeaderTop }}>
         <a href="#home">HOME</a>
         <a href="#about">ABOUT</a>
         <a href="#portfolio">PORTFOLIO</a>
