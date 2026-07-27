@@ -17,9 +17,17 @@
 ## 진행 체크리스트
 - [x] Phase 0 스캐폴드 + schema-core/db 검증(11/11 테스트)
 - [x] schema-core 확장: emptyRecordData / validateFields (+테스트)
-- [ ] 웹 데이터 레이어: IndexedDB store · DAO · 서비스(타입/기록/프리셋/내보내기)
-- [ ] 웹 UI: 디자인 토큰 · 앱 셸/내비 · 동적 폼 · 필드 빌더
-- [ ] 화면: 대시보드 · 종류 생성/편집 · 기록 목록/생성/상세 · 설정
-- [ ] 서버 `/api/sync` + Drizzle 마이그레이션 생성
-- [ ] 검증: next build · Playwright 스모크 · 스크린샷
-- [ ] 문서 갱신(README/roadmap/ADR) + 독립 레포 마이그레이션 스크립트
+- [x] 웹 데이터 레이어: IndexedDB store · DAO · 서비스(타입/기록/프리셋/내보내기)
+- [x] 웹 UI: 디자인 토큰 · 앱 셸/내비 · 동적 폼 · 필드 빌더
+- [x] 화면: 대시보드 · 종류 생성/편집 · 기록 목록/생성/상세 · 설정
+- [x] 서버 `/api/sync` + Drizzle 마이그레이션 생성(0000_*.sql)
+- [x] 검증: **next build 통과(10 routes)** · **Playwright 스모크 전부 통과(10샷)**
+- [x] 문서 갱신(README/roadmap/ADR 0006·0007) + 독립 레포 분리 가이드(standalone.md)
+
+## 결과 요약 (아침 검토용)
+- **동작하는 local-first 웹 MVP.** 오프라인·즉시성. 프리셋(가계부/할일/일기) 자동 시드.
+- **논지 A 라이브 증명:** Playwright가 커스텀 종류("운동 기록")를 UI에서 만들어 대시보드에 표시 — 코드 배포 0.
+- **논지 B:** 데이터는 IndexedDB(내 기기), JSON export/import로 소유·백업.
+- **UX:** 반응형(모바일 하단 내비/데스크톱 사이드바) · 라이트/다크 · ₩ 통화 포맷 · 세그먼트 입력.
+- **풀스택:** Next Route Handler `/api/sync`(Drizzle push/pull+LWW) + Postgres용 마이그레이션 SQL. (라이브 동기화는 Postgres 필요 → 후속)
+- **후속:** 관리형 동기화 엔진 스파이크(ADR-0003) · Expo 네이티브 앱(Tamagui) · 배포(Vercel/Neon/EAS).

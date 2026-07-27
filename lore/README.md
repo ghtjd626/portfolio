@@ -51,16 +51,18 @@
 | [`docs/development.md`](./docs/development.md) | 로컬 개발/실행 가이드 (설치·명령·현재 동작 범위) |
 | [`docs/adr/`](./docs/adr/) | 아키텍처 결정 기록 0001–0005 (What / Why / How / Trade-off / 반사실) |
 
-## 현재 상태
+## 현재 상태 — **동작하는 웹 MVP** ✅
 
-**Phase 0 — 기반.** 문제 정의·핵심 결정 문서화에 더해, **코드 스캐폴드가 올라왔다:**
+문서·설계에 더해, **실제로 돌아가는 local-first 웹 앱**이 있다 (`apps/web`, `next build` 통과, Playwright 스모크 10/10):
 
-- Turborepo(pnpm) 모노레포 — `apps/web`(Next.js) · `apps/mobile`(Expo) · `packages/{schema-core, db, ui}`
-- **`schema-core`** — FieldDef → Zod 컴파일 **실구현**. 논지 A가 문서상 주장이 아니라 **테스트 5/5 + strict 타입체크로 검증됨**.
-- **`db`** — 고정 물리 스키마(`record_types`/`records`(JSONB)/`tags`) Drizzle 구현.
-- CI(lint·type-check·test) · Docker Compose(Postgres) 골격.
+- **사용자 정의 스키마(논지 A) — 라이브 증명.** UI에서 "기록 종류"와 필드를 정의하면 즉시 폼·검증·목록이 생성된다. Playwright가 코드 배포 없이 커스텀 종류를 만들어 확인.
+- **Local-first(논지 B).** 데이터는 IndexedDB(내 기기)에 먼저 저장 → 오프라인·즉시성. JSON export/import로 소유·백업.
+- **프리셋:** 가계부 · 할 일 · 일기 (하드코딩이 아니라 미리 정의된 "기록 종류").
+- **UX:** 반응형(모바일 하단 내비 / 데스크톱 사이드바) · 라이트/다크 · ₩ 통화 포맷 · 세그먼트 입력.
+- **풀스택:** `schema-core`(FieldDef→Zod, 테스트) · `db`(Drizzle 물리 스키마 + 마이그레이션 SQL) · `/api/sync`(push/pull+LWW).
 
-실행/설치 방법은 [`docs/development.md`](./docs/development.md). 다음은 Phase 1 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md)).
+검증된 것과 코드/설계만 된 것의 경계는 [`docs/mvp-buildlog.md`](./docs/mvp-buildlog.md), 실행법은 [`docs/development.md`](./docs/development.md).
+독립 레포 분리는 [`docs/standalone.md`](./docs/standalone.md). 다음은 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md)) · Expo 네이티브 앱.
 
 ---
 

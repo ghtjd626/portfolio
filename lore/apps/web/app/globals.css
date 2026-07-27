@@ -393,7 +393,11 @@ h3 {
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform 0.1s, background 0.15s, opacity 0.15s;
+}
+.btn:not(.btn-block) {
+  flex: 0 0 auto;
 }
 .btn:active {
   transform: scale(0.97);

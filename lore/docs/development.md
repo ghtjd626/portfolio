@@ -27,8 +27,18 @@ pnpm install
 | `pnpm lint` | 전 패키지 린트 |
 | `pnpm db:up` / `pnpm db:down` | 로컬 Postgres(도커) 기동/종료 |
 | `pnpm --filter @lore/db db:generate` | Drizzle 마이그레이션 생성 |
-| `pnpm --filter @lore/web dev` | 웹(Next.js) 개발 서버 |
+| `pnpm --filter @lore/web dev` | 웹(Next.js) 개발 서버 → http://localhost:3000 |
+| `pnpm --filter @lore/web build` | 웹 프로덕션 빌드(타입체크 포함) |
+| `pnpm --filter @lore/web e2e` | Playwright 스모크(서버가 떠 있어야 함; `BASE`로 URL 지정) |
 | `pnpm --filter @lore/mobile start` | 모바일(Expo) 개발 서버 |
+
+### 웹 앱을 직접 써 보기
+```bash
+pnpm --filter @lore/web dev
+# 브라우저에서 http://localhost:3000
+# 첫 방문 시 프리셋(가계부/할일/일기)이 자동 생성된다.
+# 새 종류를 만들어 보면(홈 → 새 종류) 코드 없이 폼·검증·목록이 생기는 걸 볼 수 있다.
+```
 
 ## 지금 무엇이 "진짜" 동작하나 (Phase 0 스코프)
 
