@@ -15,14 +15,17 @@ Local-first 동기화 엔진을 **지금 확정하지 않는다.** 대신 Phase 
 - 동기화 엔진은 이 프로젝트에서 **가장 위험도·영향도가 큰 의존성**이다. 데이터 저장·충돌·오프라인·아키텍처 전반을 규정한다.
 - "인기 있으니까"로 고르는 것은 정확히 우리가 피하려는 **AI 양산물 함정**이다(브리프 §동기).
 - ADR-0001이 명확한 평가 기준을 준다: **고정 물리 테이블 + JSONB `data`** 를 잘 동기화하는가.
+- ADR-0005(유니버설)로 클라이언트가 **웹 + 모바일(Expo/RN)** 둘이다. 엔진은 **두 런타임을 모두 지원**해야 한다(아래 필수 관문).
 
 ## Considered Options — 후보
 
-- **ElectricSQL** — Postgres ↔ 로컬 SQLite 동기화, 성숙 진행 중.
-- **Zero (Rocicorp)** — 쿼리 기반 동기화, 뛰어난 DX, 신생.
-- **RxDB** — 오프라인 우선 문서 DB + 복제, 유연.
-- **PowerSync** — Postgres/SQLite 동기화, 상용 지원.
+- **ElectricSQL** — Postgres ↔ 로컬 SQLite 동기화, 성숙 진행 중. 웹+RN 지원.
+- **PowerSync** — Postgres/SQLite 동기화, 상용 지원. 웹+RN 지원.
+- **RxDB** — 오프라인 우선 문서 DB + 복제, 유연. 웹+RN 지원.
+- **Zero (Rocicorp)** — 쿼리 기반 동기화, 뛰어난 DX, 신생. **현재 웹 중심** → RN 지원이 관문 통과의 관건.
 - (참고) **Yjs/Automerge** — CRDT 라이브러리, 더 DIY.
+
+> 필수 관문(웹+RN 지원)이 후보를 실제로 좁힌다. Postgres 원천 + 웹·네이티브 동시 지원 관점에서 **ElectricSQL·PowerSync·RxDB**가 우선 검증 대상이다.
 
 ## Why — 유보의 근거
 
@@ -37,6 +40,7 @@ Local-first 동기화 엔진을 **지금 확정하지 않는다.** 대신 Phase 
 **공통 시나리오:** `record_types` 1건 + `records`(JSONB `data`) N건을, 두 기기(탭)에서 오프라인 편집 후 온라인 병합.
 
 **평가 기준 (가중치 순):**
+0. **[필수 관문] 웹 + Expo/React Native 양쪽 런타임 지원** — ADR-0005의 유니버설 전략상, 웹(SQLite-WASM)과 네이티브(expo-sqlite) 둘 다 지원하지 못하면 탈락.
 1. **동적/JSONB 스키마 지원** — 고정 물리 스키마 위 JSONB를 매끄럽게 다루는가.
 2. **충돌 해결 모델** — CRDT vs Last-Write-Wins. 우리 데이터는 대체로 단일 사용자·단일 편집 → LWW로 충분할 가능성, 검증한다.
 3. **오프라인 쓰기 신뢰성** — 장시간 오프라인·재접속 시 유실/중복 없는가.

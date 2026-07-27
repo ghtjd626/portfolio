@@ -24,6 +24,7 @@
 **Turborepo를 택한다.**
 
 - **진짜 공유 니즈가 있다.** `schema-core`를 클라·서버가 함께 쓰는 것은 억지 분리가 아니라 **필연**. 이게 모노레포의 정당한 이유다.
+- **클라이언트가 둘로 늘어 공유 이득이 더 크다.** ADR-0005의 유니버설 전략으로 웹+모바일 두 클라가 `schema-core`·`ui`(Tamagui)를 공유 → 모노레포의 정당성이 강화된다.
 - **드리프트 방지.** 검증·타입을 단일 패키지로 두어 한 소스에서 관리.
 - **경계의 가시화.** `apps/web`은 얇게, 도메인/데이터/UI는 패키지로 → 백엔드/아키텍처 역량이 구조로 드러난다.
 - **CI 효율.** Turborepo 캐시로 lint/type/test를 변경분만.
@@ -32,11 +33,13 @@
 
 ```
 lore/
-  apps/web/            -- Next.js (App Router)
+  apps/
+    web/               -- Next.js (App Router): 웹 UI + 서버(API·Drizzle/Postgres)
+    mobile/            -- Expo (React Native, Expo Router): 네이티브 앱
   packages/
-    schema-core/       -- FieldDef ↔ Zod, 공유 타입 (클라+서버)
-    db/                -- Drizzle 스키마·쿼리
-    ui/                -- shadcn 기반 디자인 시스템 + 동적 폼 렌더러
+    schema-core/       -- FieldDef ↔ Zod, 공유 타입 (웹+모바일+서버)
+    db/                -- Drizzle 스키마·쿼리 (서버)
+    ui/                -- Tamagui 유니버설 컴포넌트·디자인 토큰 + 동적 폼 렌더러
   docs/
 ```
 

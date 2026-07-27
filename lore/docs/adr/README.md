@@ -14,6 +14,7 @@
 | [0002](./0002-orm-drizzle.md) | ORM으로 Drizzle 채택 (Prisma 대신) | Accepted |
 | [0003](./0003-sync-engine-spike.md) | 동기화 엔진은 스파이크 후 결정 | Proposed |
 | [0004](./0004-monorepo-turborepo.md) | Turborepo 모노레포 채택 | Accepted |
+| [0005](./0005-client-multiplatform-strategy.md) | 클라이언트/멀티플랫폼 전략: 유니버설(Expo+Next.js) | Accepted |
 
 ## 상태 정의
 - **Proposed** — 제안됨, 아직 실증 전

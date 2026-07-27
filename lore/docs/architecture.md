@@ -1,38 +1,42 @@
 # Architecture — 아키텍처 개요
 
-> 이 문서는 두 논지(사용자 정의 스키마 · local-first)를 **어떻게(How)** 구현하는지를 설명한다.
+> 이 문서는 세 논지/요구(사용자 정의 스키마 · local-first · **멀티플랫폼 네이티브 UX**)를 **어떻게(How)** 구현하는지를 설명한다.
 > 결정의 *근거(Why)* 는 각 ADR에, *배경(What)* 은 discovery/vision에 있다.
 
-## 1. 큰 그림
+## 1. 큰 그림 (유니버설: 웹 + 모바일 + 서버)
 
 ```mermaid
 flowchart TB
-    subgraph Client["내 기기 (브라우저 / PWA)"]
-        UI["UI · 동적 폼 렌더러<br/>(Tailwind + shadcn)"]
-        SVC_C["도메인/서비스 로직"]
-        CORE_C["schema-core<br/>(필드정의 → Zod)"]
-        LDB["로컬 스토어<br/>(SQLite-WASM / local-first DB)"]
-        UI --> SVC_C --> CORE_C
-        SVC_C --> LDB
+    subgraph Web["웹 클라이언트 (Next.js, 브라우저)"]
+        UIW["UI (Tamagui)"] --> SVCW["서비스 로직"] --> COREW["schema-core"]
+        SVCW --> LDBW["로컬 스토어<br/>SQLite-WASM / OPFS"]
     end
-
-    subgraph Server["서버 (동기화 원천)"]
-        API["Next.js Route Handlers"]
-        SVC_S["도메인/서비스 로직"]
-        CORE_S["schema-core (동일 패키지)"]
-        PG["PostgreSQL<br/>(record_types, records(JSONB), tags)"]
-        API --> SVC_S --> CORE_S
-        SVC_S --> PG
+    subgraph Mobile["모바일 클라이언트 (Expo / React Native)"]
+        UIM["UI (Tamagui)"] --> SVCM["서비스 로직"] --> COREM["schema-core"]
+        SVCM --> LDBM["로컬 스토어<br/>expo-sqlite"]
     end
-
-    LDB <-->|"동기화 엔진<br/>(ADR-0003 스파이크로 결정)"| PG
+    subgraph Server["서버 (Next.js 서버)"]
+        API["Route Handlers"] --> SVCS["서비스 로직"] --> CORES["schema-core"]
+        SVCS --> PG["PostgreSQL<br/>record_types · records(JSONB) · tags"]
+    end
+    LDBW <-->|동기화 엔진<br/>ADR-0003| PG
+    LDBM <-->|동기화 엔진<br/>ADR-0003| PG
 ```
 
-핵심: **`schema-core`는 클라이언트와 서버가 동일하게 소비**한다. 그래서 검증·타입 로직이 양쪽에서 갈라지지 않는다 → 모노레포의 존재 이유([ADR-0004](./adr/0004-monorepo-turborepo.md)).
+- **`schema-core`(FieldDef↔Zod)와 `ui`(Tamagui)는 웹·모바일·서버가 공유** → 검증·타입·컴포넌트가 갈라지지 않는다(모노레포의 존재 이유, [ADR-0004](./adr/0004-monorepo-turborepo.md)).
+- **동기화 엔진은 웹(SQLite-WASM)과 네이티브(expo-sqlite) 양쪽을 지원**해야 한다 → [ADR-0003](./adr/0003-sync-engine-spike.md)의 필수 관문.
+- 클라이언트 UI가 웹·모바일 둘로 늘어도 **물리 스키마는 그대로 고정**(ADR-0001) — 동기화가 트랙터블한 이유.
 
-## 2. 물리 스키마 (고정 · 소수)
+## 2. 유니버설 UI 전략 ([ADR-0005](./adr/0005-client-multiplatform-strategy.md))
 
-동적 스키마를 데이터로 눕히므로, 실제 테이블은 몇 개뿐이다. (개념 스케치 — 확정은 Phase 0 스키마 작업에서)
+- **Tamagui** 유니버설 컴포넌트 → 웹 DOM + 네이티브 프리미티브로 동시 렌더. 디자인 토큰(색·타이포·스페이싱·모션)으로 라이트/다크·일관성.
+- **Solito** → Next.js와 Expo의 내비게이션을 공유.
+- **유니버설 기본, 플랫폼별 탈출구.** 데이터 밀도 높은 데스크톱 대시보드 등은 web 전용 레이아웃 허용.
+- UX 규칙은 [ux-principles.md](./ux-principles.md)를 각 화면의 게이트로 사용.
+
+## 3. 물리 스키마 (고정 · 소수)
+
+동적 스키마를 데이터로 눕히므로 실제 테이블은 몇 개뿐이다. (개념 스케치 — 확정은 Phase 0 스키마 작업에서)
 
 ```
 record_types            -- 사용자가 정의하는 "기록 종류"
@@ -67,42 +71,54 @@ type FieldDef = {
 };
 ```
 
-- **핫 필드 최적화:** 자주 필터/정렬하는 필드는 JSONB 위에 **생성 컬럼(generated column) + 인덱스**로 승격한다. 성능은 조기 벤치마크로 검증(리스크 항목).
-- **동기화 친화:** 하드 삭제 대신 `deleted_at` soft delete, 그리고 `updated_at`/버전으로 충돌 해결의 기반을 만든다(구체 전략은 ADR-0003 스파이크에서).
+- **핫 필드 최적화:** 자주 필터/정렬하는 필드는 JSONB 위에 **생성 컬럼(generated column) + 인덱스**로 승격. 성능은 조기 벤치마크로 검증.
+- **동기화 친화:** 하드 삭제 대신 `deleted_at` soft delete, `updated_at`/버전으로 충돌 해결의 기반 마련.
 
-## 3. schema-core (프로젝트의 두뇌)
+## 4. schema-core (프로젝트의 두뇌)
 
 - `record_types.fields`(FieldDef[]) → **Zod 스키마로 컴파일** → 기록 생성/수정 시 런타임 검증.
-- 같은 FieldDef → **동적 폼 렌더러**가 입력 UI를 생성.
-- 같은 FieldDef → 목록/상세 **뷰 렌더러**가 표시를 생성.
-- 클라·서버 공유 패키지(`packages/schema-core`)라 검증 규칙이 단일 소스.
+- 같은 FieldDef → **동적 폼 렌더러**가 입력 UI 생성(Tamagui, 웹+네이티브).
+- 같은 FieldDef → 목록/상세 **뷰 렌더러**가 표시 생성.
+- **웹·모바일·서버 3자 공유** 패키지(`packages/schema-core`)라 검증 규칙이 단일 소스.
 
-## 4. 레이어드 설계 (백엔드 깊이의 증거)
+## 5. 로컬 스토어 (플랫폼별) & 동기화
+
+| 위치 | 스토어 | 역할 |
+|---|---|---|
+| 웹 클라이언트 | SQLite-WASM / OPFS (또는 엔진 내장 스토어) | 오프라인 1차 사본 |
+| 모바일 클라이언트 | expo-sqlite | 오프라인 1차 사본 |
+| 서버 | PostgreSQL | 동기화 원천(진실의 유일 출처 아님) |
+
+- 동기화 엔진 선택은 [ADR-0003](./adr/0003-sync-engine-spike.md) 스파이크로 결정하되, **웹+RN 양쪽 지원이 필수 관문**.
+- 충돌 해결은 데이터 특성(대체로 단일 사용자·단일 편집)상 LWW로 충분할 가능성 — 스파이크에서 검증.
+
+## 6. 레이어드 설계 (백엔드 깊이의 증거)
 
 ```
-UI (app/, components/)         -- 얇게. 서비스 호출만.
+UI (Tamagui, apps/web · apps/mobile)   -- 얇게. 서비스 호출만.
   └─ Service (도메인 유스케이스, 검증·정책)
        └─ Repository (데이터 접근; 로컬 스토어 / Drizzle)
             └─ Store (local-first DB  ↔  Postgres)
 ```
 
-Next.js 풀스택이지만 라우트 핸들러를 얇게 유지하고 서비스/레포지토리를 분리해, "Next에 다 때려박은 앱"이 아니라 **경계가 명확한 모듈러 모놀리스**로 만든다.
+Next.js 풀스택이지만 라우트 핸들러를 얇게 유지하고 서비스/레포지토리를 분리해 **경계가 명확한 모듈러 모놀리스**로 만든다.
 
-## 5. 모노레포 구조 (계획)
+## 7. 모노레포 구조 (계획)
 
 ```
 lore/
   apps/
-    web/                 -- Next.js (App Router)
+    web/                 -- Next.js (App Router): 웹 UI + 서버(API·Drizzle/Postgres)
+    mobile/              -- Expo (React Native, Expo Router): 네이티브 앱
   packages/
-    schema-core/         -- FieldDef ↔ Zod, 공유 타입 (클라+서버)
-    db/                  -- Drizzle 스키마·쿼리
-    ui/                  -- shadcn 기반 디자인 시스템 + 동적 폼 렌더러
-  docs/                  -- discovery, vision, architecture, roadmap, adr
+    schema-core/         -- FieldDef ↔ Zod, 공유 타입 (웹+모바일+서버)
+    db/                  -- Drizzle 스키마·쿼리 (서버)
+    ui/                  -- Tamagui 유니버설 컴포넌트·디자인 토큰 + 동적 폼 렌더러
+  docs/                  -- discovery, vision, architecture, roadmap, ux-principles, adr
 ```
 
-## 6. 열린 결정 (아직 확정 아님)
+## 8. 열린 결정 (아직 확정 아님)
 
-- **동기화 엔진** — ElectricSQL / Zero / RxDB / PowerSync 중 스파이크로 결정 (ADR-0003).
-- **로컬 스토어 형태** — SQLite-WASM vs 엔진 내장 스토어. 동기화 엔진 선택에 종속.
-- **충돌 해결 모델** — CRDT vs Last-Write-Wins. 데이터 특성(대부분 단일 사용자·단일 편집)상 LWW로 충분할 가능성, 스파이크에서 검증.
+- **동기화 엔진** — 웹+RN 지원을 필수 관문으로, ElectricSQL / PowerSync / RxDB / (Zero) 중 스파이크로 결정 ([ADR-0003](./adr/0003-sync-engine-spike.md)).
+- **로컬 스토어 형태** — 웹의 SQLite-WASM vs 엔진 내장 스토어. 동기화 엔진 선택에 종속.
+- **충돌 해결 모델** — CRDT vs Last-Write-Wins. 스파이크에서 검증.
