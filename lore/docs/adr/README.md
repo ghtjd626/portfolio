@@ -18,6 +18,7 @@
 | [0006](./0006-mvp-local-store-indexeddb.md) | 웹 MVP 로컬 스토어로 IndexedDB 채택 | Accepted |
 | [0007](./0007-web-design-system-css-tokens.md) | 웹 MVP 디자인 시스템: 손수 만든 CSS 토큰 | Accepted |
 | [0008](./0008-visual-identity-and-home-signature-interaction.md) | 디자인 정체성 v2 + 홈 시그니처 인터랙션 "The Stream" | Accepted |
+| [0009](./0009-native-app-stack.md) | 네이티브 앱 스택: Expo Router + expo-sqlite | Accepted |
 
 ## 상태 정의
 - **Proposed** — 제안됨, 아직 실증 전

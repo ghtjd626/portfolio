@@ -49,7 +49,9 @@
 | [`docs/ux-principles.md`](./docs/ux-principles.md) | UX 원칙과 측정 기준 (네이티브급 경험의 게이트) |
 | [`docs/roadmap.md`](./docs/roadmap.md) | Phase 0–5 로드맵과 각 단계의 "증명" |
 | [`docs/development.md`](./docs/development.md) | 로컬 개발/실행 가이드 (설치·명령·현재 동작 범위) |
-| [`docs/adr/`](./docs/adr/) | 아키텍처 결정 기록 0001–0005 (What / Why / How / Trade-off / 반사실) |
+| [`docs/deploy.md`](./docs/deploy.md) | 배포 가이드 (Vercel + Neon) |
+| [`docs/app.md`](./docs/app.md) | 네이티브 앱(Expo) 실행·EAS 빌드 |
+| [`docs/adr/`](./docs/adr/) | 아키텍처 결정 기록 0001–0009 (What / Why / How / Trade-off / 반사실) |
 
 ## 현재 상태 — **동작하는 웹 MVP** ✅
 
@@ -60,9 +62,11 @@
 - **프리셋:** 가계부 · 할 일 · 일기 (하드코딩이 아니라 미리 정의된 "기록 종류").
 - **UX:** 반응형(모바일 하단 내비 / 데스크톱 사이드바) · 라이트/다크 · ₩ 통화 포맷 · 세그먼트 입력.
 - **풀스택:** `schema-core`(FieldDef→Zod, 테스트) · `db`(Drizzle 물리 스키마 + 마이그레이션 SQL) · `/api/sync`(push/pull+LWW).
+- **네이티브 앱:** `apps/mobile` — Expo Router + expo-sqlite, `schema-core`를 웹과 **같은 코드로 공유**. 번들·타입체크·react-native-web 렌더로 검증([ADR-0009](./docs/adr/0009-native-app-stack.md), [app.md](./docs/app.md)).
+- **배포 준비 완료:** Vercel + Neon 설정·마이그레이션·가이드 완비 — 계정 연결만 하면 뜬다([deploy.md](./docs/deploy.md)).
 
-검증된 것과 코드/설계만 된 것의 경계는 [`docs/mvp-buildlog.md`](./docs/mvp-buildlog.md), 실행법은 [`docs/development.md`](./docs/development.md).
-독립 레포 분리는 [`docs/standalone.md`](./docs/standalone.md). 다음은 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md)) · Expo 네이티브 앱.
+검증된 것과 코드/설계만 된 것의 경계는 [`docs/mvp-buildlog.md`](./docs/mvp-buildlog.md), 실행법은 [`docs/development.md`](./docs/development.md) · [`docs/app.md`](./docs/app.md).
+독립 레포: **[github.com/ghtjd626/Lore](https://github.com/ghtjd626/Lore)**. 남은 것은 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md))와 실제 배포·스토어 제출(계정 연결).
 
 ## 미리보기
 
@@ -72,9 +76,15 @@
 |---|---|---|
 | ![홈 스트림](./docs/screenshots/02-home-stream-desktop-light.png) | ![자기장](./docs/screenshots/03-home-stream-magnet.png) | ![필드 빌더](./docs/screenshots/05-field-builder-desktop.png) |
 
-| 모바일 · 다크 | 모바일 입력 (다크) | 종류별 기록 |
+| 모바일 웹 · 다크 | 모바일 입력 (다크) | 종류별 기록 |
 |---|---|---|
 | ![모바일 다크](./docs/screenshots/07-home-mobile-dark.png) | ![모바일 폼](./docs/screenshots/08-record-form-mobile-dark.png) | ![종류](./docs/screenshots/04-type-records-desktop.png) |
+
+**네이티브 앱 (Expo · React Native)** — 웹과 `@lore/schema-core`를 같은 코드로 공유한다. 아래는 react-native-web로 export해 캡처한 실제 앱 화면.
+
+| 앱 · 홈 | 앱 · 동적 폼 (schema-core 공유) | 앱 · 다크 |
+|---|---|---|
+| ![앱 홈](./docs/screenshots/app-01-home.png) | ![앱 폼](./docs/screenshots/app-02-form.png) | ![앱 다크](./docs/screenshots/app-03-home-dark.png) |
 
 > 정체성은 **그래파이트 + 앰버(琥珀) + 모노스페이스** — "내 삶의 로그(instrument)". 흔한 SaaS/AI 룩(둥근 카드·액센트 바·인디고·**이모지 아이콘**)을 의도적으로 피하고, 아이콘은 **직접 만든 라인 아이콘 세트**로 교체했다. 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처했다(스모크 전부 통과).
 

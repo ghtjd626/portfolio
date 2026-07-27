@@ -7,9 +7,9 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {}
+    "plugins": ["expo-router"],
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.ghtjd626.lore" },
+    "android": { "package": "com.ghtjd626.lore" },
+    "web": { "bundler": "metro", "output": "single" }
   }
 }

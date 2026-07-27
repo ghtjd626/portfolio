@@ -30,4 +30,10 @@
 - **논지 B:** 데이터는 IndexedDB(내 기기), JSON export/import로 소유·백업.
 - **UX:** 반응형(모바일 하단 내비/데스크톱 사이드바) · 라이트/다크 · ₩ 통화 포맷 · 세그먼트 입력.
 - **풀스택:** Next Route Handler `/api/sync`(Drizzle push/pull+LWW) + Postgres용 마이그레이션 SQL. (라이브 동기화는 Postgres 필요 → 후속)
-- **후속:** 관리형 동기화 엔진 스파이크(ADR-0003) · Expo 네이티브 앱(Tamagui) · 배포(Vercel/Neon/EAS).
+- **후속:** 관리형 동기화 엔진 스파이크(ADR-0003) · Tamagui 유니버설 수렴 · 실제 배포/스토어 제출.
+
+## 추가 완료 (네이티브 앱 · 배포 준비)
+- **독립 레포:** [github.com/ghtjd626/Lore](https://github.com/ghtjd626/Lore) — 히스토리 보존 이관(subtree).
+- **디자인 v2 + The Stream** 인터랙션 + **직접 만든 라인 아이콘 세트**(이모지 제거) — ADR-0008.
+- **네이티브 앱**(`apps/mobile`): Expo Router · expo-sqlite · `schema-core` 공유 · 동적 폼. `expo export`(웹) 번들 성공 + RN-web 스크린샷 검증 — ADR-0009.
+- **배포 준비:** `apps/web/vercel.json` · Drizzle 마이그레이션 · [deploy.md](./deploy.md)(Vercel+Neon) · [app.md](./app.md)(EAS). 계정 연결만 남음.
