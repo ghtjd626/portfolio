@@ -103,19 +103,23 @@ UI (Tamagui, apps/web · apps/mobile)   -- 얇게. 서비스 호출만.
 
 Next.js 풀스택이지만 라우트 핸들러를 얇게 유지하고 서비스/레포지토리를 분리해 **경계가 명확한 모듈러 모놀리스**로 만든다.
 
-## 7. 모노레포 구조 (계획)
+## 7. 모노레포 구조 (Phase 0에서 실제 구현됨)
 
 ```
 lore/
   apps/
-    web/                 -- Next.js (App Router): 웹 UI + 서버(API·Drizzle/Postgres)
-    mobile/              -- Expo (React Native, Expo Router): 네이티브 앱
+    web/                 -- Next.js (App Router): 웹 UI + 서버(API·Drizzle/Postgres)  [셸]
+    mobile/              -- Expo (React Native): 네이티브 앱                          [셸]
   packages/
-    schema-core/         -- FieldDef ↔ Zod, 공유 타입 (웹+모바일+서버)
-    db/                  -- Drizzle 스키마·쿼리 (서버)
-    ui/                  -- Tamagui 유니버설 컴포넌트·디자인 토큰 + 동적 폼 렌더러
-  docs/                  -- discovery, vision, architecture, roadmap, ux-principles, adr
+    schema-core/         -- FieldDef ↔ Zod, 공유 타입 (웹+모바일+서버)  [실구현·테스트됨]
+    db/                  -- Drizzle 스키마·쿼리 (서버)                   [실구현]
+    ui/                  -- Tamagui 유니버설 컴포넌트·디자인 토큰         [Phase 2–3]
+  docs/                  -- discovery, vision, architecture, roadmap, ux-principles, development, adr
+  turbo.json · pnpm-workspace.yaml · docker-compose.yml · .github/workflows/ci.yml
 ```
+
+- **`schema-core`·`db`는 실제 코드**(논지 A의 구현). `apps/*`와 `ui`는 위상을 세우는 셸이며, 각 앱은 `schema-core`를 실제로 import 해 "같은 코드가 웹·네이티브에서 동작"함을 스모크로 보인다.
+- 실행/설치는 [development.md](./development.md).
 
 ## 8. 열린 결정 (아직 확정 아님)
 

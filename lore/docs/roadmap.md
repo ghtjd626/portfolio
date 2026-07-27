@@ -9,14 +9,14 @@
 
 ## Phase 0 — 기반 *(현재)*
 **산출물**
-- 레포 씨앗, 비전/브리프/UX 원칙 문서, ADR 0001–0005
-- 모노레포 골격: `apps/web`(Next.js) + `apps/mobile`(Expo) shell + `packages/{schema-core, db, ui(Tamagui)}`
-- CI (lint · type-check · test) 골격
-- 물리 스키마 초안(`record_types`, `records`, `tags`)
-- `schema-core` 스켈레톤(FieldDef 타입 + Zod 컴파일 시그니처)
-- Docker Compose(로컬 Postgres)
+- [x] 레포 씨앗, 비전/브리프/UX 원칙 문서, ADR 0001–0005
+- [x] 모노레포 골격: `apps/web`(Next.js) + `apps/mobile`(Expo) shell + `packages/{schema-core, db, ui}` (Turborepo + pnpm)
+- [x] `schema-core`: FieldDef 타입 + **Zod 컴파일 실구현** — 테스트 5/5 + strict 타입체크 통과
+- [x] 물리 스키마(`record_types`, `records`(JSONB), `tags`, `record_tags`) — Drizzle로 구현
+- [x] CI (lint · type-check · test) 골격, Docker Compose(로컬 Postgres)
+- [ ] 웹·모바일 앱이 `schema-core`를 실제 import (스모크 완료; 실행 검증은 Phase 1 설치 시)
 
-**증명** — 문제 정의·핵심 판단이 문서로 확정. `apps/mobile` shell로 유니버설 스택의 조기 리스크 확인.
+**증명** — 문제 정의·핵심 판단이 문서로 확정 + **핵심 논지 A(FieldDef→Zod)가 실제로 동작함을 테스트로 증명.** 종류를 코드가 아니라 데이터로 정의하고 런타임 검증까지 되는 걸 격리 실행으로 확인.
 
 ---
 

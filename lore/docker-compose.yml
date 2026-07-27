@@ -1,0 +1,22 @@
+# 로컬 개발용 Postgres. 동기화의 "원천"(진실의 유일한 출처는 아님, ADR-0003).
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: lore-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lore
+      POSTGRES_PASSWORD: lore
+      POSTGRES_DB: lore
+    ports:
+      - "5432:5432"
+    volumes:
+      - lore-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lore -d lore"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  lore-pgdata:

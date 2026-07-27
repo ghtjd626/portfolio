@@ -48,11 +48,19 @@
 | [`docs/architecture.md`](./docs/architecture.md) | 유니버설 구조 · 물리 스키마 · schema-core · 데이터 흐름 |
 | [`docs/ux-principles.md`](./docs/ux-principles.md) | UX 원칙과 측정 기준 (네이티브급 경험의 게이트) |
 | [`docs/roadmap.md`](./docs/roadmap.md) | Phase 0–5 로드맵과 각 단계의 "증명" |
+| [`docs/development.md`](./docs/development.md) | 로컬 개발/실행 가이드 (설치·명령·현재 동작 범위) |
 | [`docs/adr/`](./docs/adr/) | 아키텍처 결정 기록 0001–0005 (What / Why / How / Trade-off / 반사실) |
 
 ## 현재 상태
 
-**Phase 0 — 기반.** 문제 정의와 핵심 결정을 문서로 확정하는 단계. 코드 스캐폴딩(Turborepo + `apps/web` + `apps/mobile` + 패키지)은 Phase 0 진행분으로 이어짐.
+**Phase 0 — 기반.** 문제 정의·핵심 결정 문서화에 더해, **코드 스캐폴드가 올라왔다:**
+
+- Turborepo(pnpm) 모노레포 — `apps/web`(Next.js) · `apps/mobile`(Expo) · `packages/{schema-core, db, ui}`
+- **`schema-core`** — FieldDef → Zod 컴파일 **실구현**. 논지 A가 문서상 주장이 아니라 **테스트 5/5 + strict 타입체크로 검증됨**.
+- **`db`** — 고정 물리 스키마(`record_types`/`records`(JSONB)/`tags`) Drizzle 구현.
+- CI(lint·type-check·test) · Docker Compose(Postgres) 골격.
+
+실행/설치 방법은 [`docs/development.md`](./docs/development.md). 다음은 Phase 1 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md)).
 
 ---
 
