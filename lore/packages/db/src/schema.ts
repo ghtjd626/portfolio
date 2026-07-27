@@ -27,6 +27,7 @@ export const recordTypes = pgTable("record_types", {
   ownerId: uuid("owner_id").notNull(),
   name: text("name").notNull(),
   icon: text("icon"),
+  color: text("color"),
   // FieldDef[] — schema-core의 정의를 그대로 저장한다(코드가 아니라 데이터).
   fields: jsonb("fields").$type<FieldDef[]>().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

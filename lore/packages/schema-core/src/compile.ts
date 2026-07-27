@@ -28,7 +28,9 @@ function compileField(field: FieldDef): z.ZodTypeAny {
     case "text":
     case "longtext": {
       let s = z.string();
-      if (field.minLength !== undefined) s = s.min(field.minLength);
+      // required 텍스트는 빈 문자열("")도 거부한다(최소 길이 1).
+      const min = field.minLength ?? (field.required ? 1 : undefined);
+      if (min !== undefined) s = s.min(min);
       if (field.maxLength !== undefined) s = s.max(field.maxLength);
       return s;
     }
