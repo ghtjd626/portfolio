@@ -64,6 +64,18 @@
 검증된 것과 코드/설계만 된 것의 경계는 [`docs/mvp-buildlog.md`](./docs/mvp-buildlog.md), 실행법은 [`docs/development.md`](./docs/development.md).
 독립 레포 분리는 [`docs/standalone.md`](./docs/standalone.md). 다음은 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md)) · Expo 네이티브 앱.
 
+## 미리보기
+
+| 대시보드 (데스크톱) | 기록 입력 (동적 폼) | 필드 빌더 (스키마 정의) |
+|---|---|---|
+| ![대시보드](./docs/screenshots/01-dashboard-desktop-light.png) | ![기록 입력](./docs/screenshots/02-record-form-desktop.png) | ![필드 빌더](./docs/screenshots/05-field-builder-desktop.png) |
+
+| 모바일 (다크) | 모바일 폼 (다크) | 기록 상세 |
+|---|---|---|
+| ![모바일 다크](./docs/screenshots/09-dashboard-mobile-dark.png) | ![모바일 폼](./docs/screenshots/10-record-form-mobile-dark.png) | ![상세](./docs/screenshots/04-record-detail-desktop.png) |
+
+> 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처한 것이다(스모크 10/10 통과).
+
 ---
 
 ## 이 저장소를 읽는 법 (케이스 스터디로서)
