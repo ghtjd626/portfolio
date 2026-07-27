@@ -10,7 +10,7 @@ import { createRecordType, listRecordTypes, type RecordTypeInput } from "./recor
 export const PRESETS: RecordTypeInput[] = [
   {
     name: "가계부",
-    icon: "💰",
+    icon: "wallet",
     color: "#16a34a",
     fields: [
       { key: "title", label: "내용", type: "text", required: true },
@@ -33,7 +33,7 @@ export const PRESETS: RecordTypeInput[] = [
   },
   {
     name: "할 일",
-    icon: "✅",
+    icon: "checkCircle",
     color: "#2563eb",
     fields: [
       { key: "title", label: "할 일", type: "text", required: true },
@@ -53,7 +53,7 @@ export const PRESETS: RecordTypeInput[] = [
   },
   {
     name: "일기",
-    icon: "📓",
+    icon: "book",
     color: "#9333ea",
     fields: [
       {

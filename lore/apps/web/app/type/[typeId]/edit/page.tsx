@@ -18,7 +18,7 @@ export default function EditTypePage() {
   if (!type) {
     return (
       <EmptyState
-        emoji="🤔"
+        icon="tag"
         title="종류를 찾을 수 없어요"
         action={
           <Link className="btn btn-ghost" href="/">

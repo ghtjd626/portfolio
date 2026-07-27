@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useData } from "../../components/data-provider";
+import { Icon } from "../../components/icons";
 import { PageHeader } from "../../components/ui";
 import { exportAll, importBundle } from "../../lib/service/export-import";
 import { syncNow } from "../../lib/sync/sync";
@@ -53,7 +54,7 @@ export default function SettingsPage() {
           잇기 위한 것으로, 서버(PostgreSQL)가 준비되면 동작합니다.
         </div>
         <button className="btn btn-primary" type="button" onClick={onSync} disabled={syncing}>
-          {syncing ? "동기화 중…" : "지금 동기화"}
+          <Icon name="sync" size={17} /> {syncing ? "동기화 중…" : "지금 동기화"}
         </button>
       </div>
 
@@ -64,14 +65,14 @@ export default function SettingsPage() {
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button className="btn btn-ghost" type="button" onClick={onExport}>
-            내보내기 (JSON)
+            <Icon name="download" size={17} /> 내보내기 (JSON)
           </button>
           <button
             className="btn btn-ghost"
             type="button"
             onClick={() => fileRef.current?.click()}
           >
-            가져오기
+            <Icon name="upload" size={17} /> 가져오기
           </button>
           <input
             ref={fileRef}

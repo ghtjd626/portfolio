@@ -17,7 +17,7 @@ export default function QuickAddPage() {
       <PageHeader title="무엇을 기록할까요?" />
       {types.length === 0 ? (
         <EmptyState
-          emoji="🗂️"
+          icon="tag"
           title="종류가 아직 없어요"
           sub="먼저 기록 종류를 하나 만들어 주세요."
           action={

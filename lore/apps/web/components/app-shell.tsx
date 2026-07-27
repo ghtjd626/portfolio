@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { Icon, type IconName } from "./icons";
 import { ThemeToggle } from "./theme-toggle";
 
-const NAV = [
-  { href: "/", label: "홈", ico: "🏠" },
-  { href: "/new", label: "기록", ico: "➕" },
-  { href: "/settings", label: "설정", ico: "⚙️" },
+const NAV: { href: string; label: string; icon: IconName }[] = [
+  { href: "/", label: "홈", icon: "home" },
+  { href: "/new", label: "기록", icon: "plus" },
+  { href: "/settings", label: "설정", icon: "sliders" },
 ];
 
 /** 반응형 셸: 데스크톱=사이드바, 모바일=상단바+하단 내비(thumb-zone). */
@@ -26,7 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             href={n.href}
             className={`nav-item ${isActive(n.href) ? "active" : ""}`}
           >
-            <span className="ico">{n.ico}</span>
+            <Icon name={n.icon} size={19} />
             {n.label}
           </Link>
         ))}
@@ -52,7 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             href={n.href}
             className={`bottomnav-item ${isActive(n.href) ? "active" : ""}`}
           >
-            <span className="ico">{n.ico}</span>
+            <Icon name={n.icon} size={23} strokeWidth={isActive(n.href) ? 2.1 : 1.75} />
             {n.label}
           </Link>
         ))}

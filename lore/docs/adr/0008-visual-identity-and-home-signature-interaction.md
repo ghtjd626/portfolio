@@ -35,6 +35,7 @@
 ## How
 
 - CSS 토큰 v2(라이트/다크), 헤어라인·샤프 모서리, 카탈로그형 종류 타일(스와치).
+- **이모지 → 직접 만든 라인 아이콘 세트**(`components/icons.tsx`). 이모지는 대표적 "AI 생성" 신호라, 24×24 stroke 아이콘 세트로 교체하고 종류 아이콘은 아이콘 피커로 고른다(레거시 이모지는 하위호환 렌더).
 - `LifeStream`: requestAnimationFrame 루프에서 DOM transform 직접 갱신(관성·자기장). **reduced-motion·터치(수평 팬)·키보드** 대응. 마크는 접근 가능한 `<button>`.
 
 ## Trade-off / Consequences

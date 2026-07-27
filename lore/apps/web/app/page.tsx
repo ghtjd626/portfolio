@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useData } from "../components/data-provider";
 import { useAllRecords, useRecordTypes } from "../components/hooks";
+import { Icon, TypeIcon } from "../components/icons";
 import { LifeStream } from "../components/life-stream";
 import { TypeTile } from "../components/type-tile";
 import { EmptyState, Loading } from "../components/ui";
@@ -41,7 +42,7 @@ export default function DashboardPage() {
           </div>
         </div>
         <Link className="btn btn-primary btn-sm" href="/new">
-          ＋ 기록
+          <Icon name="plus" size={16} /> 기록
         </Link>
       </div>
 
@@ -68,7 +69,7 @@ export default function DashboardPage() {
           <TypeTile key={t.id} type={t} count={countByType.get(t.id) ?? 0} href={`/type/${t.id}`} />
         ))}
         <Link href="/type/new" className="type-tile dashed">
-          <span style={{ fontSize: 22 }}>＋</span>
+          <Icon name="plus" size={22} />
           <span className="type-tile-name" style={{ fontSize: 13 }}>
             새 종류
           </span>
@@ -78,7 +79,7 @@ export default function DashboardPage() {
       <div className="section-title">최근 기록</div>
       {recent.length === 0 ? (
         <EmptyState
-          emoji="✏️"
+          icon="pencil"
           title="아직 기록이 없어요"
           sub="위 ‘＋ 기록’으로 첫 기록을 남겨보세요."
         />
@@ -88,7 +89,9 @@ export default function DashboardPage() {
             const type = typeById.get(r.typeId);
             return (
               <Link key={r.id} href={`/record/${r.id}`} className="list-item">
-                <span className="list-item-emoji">{type?.icon ?? "🗂️"}</span>
+                <span className="list-item-emoji" style={{ color: type?.color }}>
+                  <TypeIcon icon={type?.icon} size={19} />
+                </span>
                 <span className="list-item-main">
                   <span className="list-item-title">
                     {type ? recordHeadline(type, r) : "(알 수 없는 종류)"}
@@ -97,7 +100,7 @@ export default function DashboardPage() {
                     {type?.name} · {formatWhen(r.occurredAt)}
                   </span>
                 </span>
-                <span className="chevron">›</span>
+                <Icon name="chevronRight" size={18} className="chevron" />
               </Link>
             );
           })}

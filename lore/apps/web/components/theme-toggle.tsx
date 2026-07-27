@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Icon } from "./icons";
 
 type Theme = "light" | "dark";
 
@@ -27,8 +28,8 @@ export function ThemeToggle() {
   }
 
   return (
-    <button className="back-btn" onClick={toggle} aria-label="테마 전환" type="button">
-      {current === "dark" ? "☀️" : "🌙"}
+    <button className="icon-btn" onClick={toggle} aria-label="테마 전환" type="button">
+      <Icon name={current === "dark" ? "sun" : "moon"} size={20} />
     </button>
   );
 }

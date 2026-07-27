@@ -10,6 +10,7 @@ import {
 } from "../lib/service/record-types";
 import type { LocalRecordType } from "../lib/store/entities";
 import { useData } from "./data-provider";
+import { Icon, TYPE_ICON_NAMES } from "./icons";
 
 const TYPE_LABELS: Record<FieldType, string> = {
   text: "한 줄 텍스트",
@@ -87,7 +88,7 @@ export function RecordTypeForm({ existing }: { existing?: LocalRecordType }) {
   const { refresh, toast } = useData();
 
   const [name, setName] = useState(existing?.name ?? "");
-  const [icon, setIcon] = useState(existing?.icon ?? "🗂️");
+  const [icon, setIcon] = useState(existing?.icon ?? "tag");
   const [color, setColor] = useState(existing?.color ?? COLORS[0]);
   const [fields, setFields] = useState<EditField[]>(
     existing ? existing.fields.map(toEdit) : [{ ...newField(), label: "" }],
@@ -149,40 +150,39 @@ export function RecordTypeForm({ existing }: { existing?: LocalRecordType }) {
         />
       </div>
 
-      <div className="fb-grid">
-        <div className="field">
-          <label className="field-label" htmlFor="rt-icon">
-            아이콘
-          </label>
-          <input
-            id="rt-icon"
-            className="input"
-            value={icon}
-            maxLength={2}
-            onChange={(e) => setIcon(e.target.value)}
-            placeholder="🗂️"
-          />
+      <div className="field">
+        <span className="field-label">아이콘</span>
+        <div className="icon-picker">
+          {TYPE_ICON_NAMES.map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`icon-opt ${icon === n ? "active" : ""}`}
+              aria-label={n}
+              aria-pressed={icon === n}
+              style={icon === n ? { color, borderColor: color } : undefined}
+              onClick={() => setIcon(n)}
+            >
+              <Icon name={n} size={20} />
+            </button>
+          ))}
         </div>
-        <div className="field">
-          <span className="field-label">색상</span>
-          <div className="segmented">
-            {COLORS.map((c) => (
-              <button
-                key={c}
-                type="button"
-                aria-label={`색상 ${c}`}
-                onClick={() => setColor(c)}
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 999,
-                  background: c,
-                  border: color === c ? "3px solid var(--text)" : "2px solid var(--border)",
-                  cursor: "pointer",
-                }}
-              />
-            ))}
-          </div>
+      </div>
+
+      <div className="field">
+        <span className="field-label">색상</span>
+        <div className="swatch-row-list">
+          {COLORS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`color-swatch ${color === c ? "active" : ""}`}
+              aria-label={`색상 ${c}`}
+              aria-pressed={color === c}
+              onClick={() => setColor(c)}
+              style={{ background: c }}
+            />
+          ))}
         </div>
       </div>
 

@@ -76,7 +76,7 @@
 |---|---|---|
 | ![모바일 다크](./docs/screenshots/07-home-mobile-dark.png) | ![모바일 폼](./docs/screenshots/08-record-form-mobile-dark.png) | ![종류](./docs/screenshots/04-type-records-desktop.png) |
 
-> 정체성은 **그래파이트 + 앰버(琥珀) + 모노스페이스** — "내 삶의 로그(instrument)". 흔한 SaaS/AI 룩(둥근 카드·액센트 바·인디고)을 의도적으로 피했다. 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처했다(스모크 전부 통과).
+> 정체성은 **그래파이트 + 앰버(琥珀) + 모노스페이스** — "내 삶의 로그(instrument)". 흔한 SaaS/AI 룩(둥근 카드·액센트 바·인디고·**이모지 아이콘**)을 의도적으로 피하고, 아이콘은 **직접 만든 라인 아이콘 세트**로 교체했다. 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처했다(스모크 전부 통과).
 
 ---
 

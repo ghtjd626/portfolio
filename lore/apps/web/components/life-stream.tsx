@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { formatWhen, recordHeadline } from "../lib/display";
 import type { LocalRecord, LocalRecordType } from "../lib/store/entities";
+import { TypeIcon } from "./icons";
 
 /**
  * The Stream — 홈의 시그니처 인터랙션.
@@ -324,8 +325,13 @@ export function LifeStream({
           {lanes.map((t, i) => (
             <div key={t.id} className="lane" style={{ top: geom.laneCenter(i) - geom.laneH / 2 }}>
               <span className="lane-label">
-                <span className="dot" style={{ background: t.color ?? "var(--primary)" }} />
-                {t.icon} {t.name}
+                <span
+                  className="lane-ico"
+                  style={{ color: t.color ?? "var(--primary)" }}
+                >
+                  <TypeIcon icon={t.icon} size={14} />
+                </span>
+                {t.name}
               </span>
             </div>
           ))}

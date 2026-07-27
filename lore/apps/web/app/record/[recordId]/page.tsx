@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useData } from "../../../components/data-provider";
 import { useRecord, useRecordType } from "../../../components/hooks";
+import { TypeIcon } from "../../../components/icons";
 import { RecordForm } from "../../../components/record-form";
 import { EmptyState, Loading, PageHeader } from "../../../components/ui";
 import { formatFieldValue, formatWhen } from "../../../lib/display";
@@ -23,7 +24,7 @@ export default function RecordDetailPage() {
   if (!record || !type) {
     return (
       <EmptyState
-        emoji="🤔"
+        icon="tag"
         title="기록을 찾을 수 없어요"
         action={
           <Link className="btn btn-ghost" href="/">
@@ -53,9 +54,14 @@ export default function RecordDetailPage() {
   return (
     <div>
       <PageHeader
-        title={`${type.icon ?? "🗂️"} ${type.name}`}
+        title={type.name}
         sub={formatWhen(record.occurredAt)}
         back
+        leading={
+          <span className="head-ico" style={{ color: type.color }}>
+            <TypeIcon icon={type.icon} size={22} />
+          </span>
+        }
         action={
           <button className="btn btn-ghost btn-sm" type="button" onClick={() => setEditing(true)}>
             편집
