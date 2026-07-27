@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useData } from "../components/data-provider";
 import { useAllRecords, useRecordTypes } from "../components/hooks";
+import { LifeStream } from "../components/life-stream";
+import { TypeTile } from "../components/type-tile";
 import { EmptyState, Loading } from "../components/ui";
 import { formatWhen, recordHeadline } from "../lib/display";
 
@@ -19,54 +21,55 @@ export default function DashboardPage() {
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
   const thisWeek = records.filter((r) => r.occurredAt >= weekAgo).length;
-  const recent = records.slice(0, 8);
+  const recent = records.slice(0, 6);
+  const today = new Date().toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  });
 
   return (
     <div>
-      <div className="page-head">
-        <div style={{ flex: 1 }}>
-          <div className="page-title">내 기록</div>
-          <div className="page-sub">내가 정의하고, 내 기기에 사는 데이터</div>
+      <div className="row-between" style={{ marginBottom: 16 }}>
+        <div>
+          <div className="page-title" style={{ fontSize: 24 }}>
+            내 기록
+          </div>
+          <div className="eyebrow" style={{ marginTop: 5 }}>
+            {today}
+          </div>
         </div>
+        <Link className="btn btn-primary btn-sm" href="/new">
+          ＋ 기록
+        </Link>
       </div>
 
-      <div className="stat-cards">
-        <div className="stat">
-          <div className="stat-label">기록 종류</div>
-          <div className="stat-value">{types.length}</div>
+      <LifeStream types={types} records={records} />
+
+      <div className="stat-strip reveal d1" style={{ marginTop: 16 }}>
+        <div className="stat-cell">
+          <div className="k">종류</div>
+          <div className="v">{types.length}</div>
         </div>
-        <div className="stat">
-          <div className="stat-label">전체 기록</div>
-          <div className="stat-value">{records.length}</div>
+        <div className="stat-cell">
+          <div className="k">전체 기록</div>
+          <div className="v">{records.length}</div>
         </div>
-        <div className="stat">
-          <div className="stat-label">최근 7일</div>
-          <div className="stat-value">{thisWeek}</div>
+        <div className="stat-cell">
+          <div className="k">최근 7일</div>
+          <div className="v">{thisWeek}</div>
         </div>
       </div>
 
       <div className="section-title">종류</div>
-      <div className="type-grid">
+      <div className="type-grid reveal d2">
         {types.map((t) => (
-          <Link key={t.id} href={`/type/${t.id}`} className="type-card">
-            <span className="type-card-bar" style={{ background: t.color ?? "var(--primary)" }} />
-            <span className="type-card-icon">{t.icon ?? "🗂️"}</span>
-            <span className="type-card-name">{t.name}</span>
-            <span className="type-card-count">{countByType.get(t.id) ?? 0}개</span>
-          </Link>
+          <TypeTile key={t.id} type={t} count={countByType.get(t.id) ?? 0} href={`/type/${t.id}`} />
         ))}
-        <Link
-          href="/type/new"
-          className="type-card"
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            color: "var(--text-muted)",
-            borderStyle: "dashed",
-          }}
-        >
-          <span className="type-card-icon">＋</span>
-          <span className="type-card-name" style={{ fontSize: 14 }}>
+        <Link href="/type/new" className="type-tile dashed">
+          <span style={{ fontSize: 22 }}>＋</span>
+          <span className="type-tile-name" style={{ fontSize: 13 }}>
             새 종류
           </span>
         </Link>
@@ -77,10 +80,10 @@ export default function DashboardPage() {
         <EmptyState
           emoji="✏️"
           title="아직 기록이 없어요"
-          sub="아래 ‘기록’ 버튼으로 첫 기록을 남겨보세요."
+          sub="위 ‘＋ 기록’으로 첫 기록을 남겨보세요."
         />
       ) : (
-        <div className="list">
+        <div className="list reveal d3">
           {recent.map((r) => {
             const type = typeById.get(r.typeId);
             return (

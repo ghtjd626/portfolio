@@ -66,15 +66,17 @@
 
 ## 미리보기
 
-| 대시보드 (데스크톱) | 기록 입력 (동적 폼) | 필드 빌더 (스키마 정의) |
-|---|---|---|
-| ![대시보드](./docs/screenshots/01-dashboard-desktop-light.png) | ![기록 입력](./docs/screenshots/02-record-form-desktop.png) | ![필드 빌더](./docs/screenshots/05-field-builder-desktop.png) |
+홈의 시그니처 인터랙션 **The Stream** — 모든 기록 종류가 하나의 시간축을 공유한다는 이 프로젝트의 핵심 통찰을, 관성 스크러빙·포인터 자기장·"지금" 펄스가 있는 손수 만든 시각화로 보여준다([ADR-0008](./docs/adr/0008-visual-identity-and-home-signature-interaction.md)).
 
-| 모바일 (다크) | 모바일 폼 (다크) | 기록 상세 |
+| 홈 · The Stream | 포인터 자기장 + 툴팁 | 필드 빌더 (스키마 정의) |
 |---|---|---|
-| ![모바일 다크](./docs/screenshots/09-dashboard-mobile-dark.png) | ![모바일 폼](./docs/screenshots/10-record-form-mobile-dark.png) | ![상세](./docs/screenshots/04-record-detail-desktop.png) |
+| ![홈 스트림](./docs/screenshots/02-home-stream-desktop-light.png) | ![자기장](./docs/screenshots/03-home-stream-magnet.png) | ![필드 빌더](./docs/screenshots/05-field-builder-desktop.png) |
 
-> 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처한 것이다(스모크 10/10 통과).
+| 모바일 · 다크 | 모바일 입력 (다크) | 종류별 기록 |
+|---|---|---|
+| ![모바일 다크](./docs/screenshots/07-home-mobile-dark.png) | ![모바일 폼](./docs/screenshots/08-record-form-mobile-dark.png) | ![종류](./docs/screenshots/04-type-records-desktop.png) |
+
+> 정체성은 **그래파이트 + 앰버(琥珀) + 모노스페이스** — "내 삶의 로그(instrument)". 흔한 SaaS/AI 룩(둥근 카드·액센트 바·인디고)을 의도적으로 피했다. 위 화면은 전부 실제 빌드를 Playwright로 구동해 캡처했다(스모크 전부 통과).
 
 ---
 

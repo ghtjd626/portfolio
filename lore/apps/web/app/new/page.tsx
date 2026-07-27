@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useData } from "../../components/data-provider";
 import { useRecordTypes } from "../../components/hooks";
+import { TypeTile } from "../../components/type-tile";
 import { EmptyState, Loading, PageHeader } from "../../components/ui";
 
 export default function QuickAddPage() {
@@ -28,24 +29,11 @@ export default function QuickAddPage() {
       ) : (
         <div className="type-grid">
           {types.map((t) => (
-            <Link key={t.id} href={`/type/${t.id}/record/new`} className="type-card">
-              <span className="type-card-bar" style={{ background: t.color ?? "var(--primary)" }} />
-              <span className="type-card-icon">{t.icon ?? "🗂️"}</span>
-              <span className="type-card-name">{t.name}</span>
-            </Link>
+            <TypeTile key={t.id} type={t} href={`/type/${t.id}/record/new`} />
           ))}
-          <Link
-            href="/type/new"
-            className="type-card"
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              color: "var(--text-muted)",
-              borderStyle: "dashed",
-            }}
-          >
-            <span className="type-card-icon">＋</span>
-            <span className="type-card-name" style={{ fontSize: 14 }}>
+          <Link href="/type/new" className="type-tile dashed">
+            <span style={{ fontSize: 22 }}>＋</span>
+            <span className="type-tile-name" style={{ fontSize: 13 }}>
               새 종류
             </span>
           </Link>
