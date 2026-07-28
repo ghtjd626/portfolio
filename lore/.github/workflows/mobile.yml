@@ -1,0 +1,35 @@
+# 모바일 앱 빌드 (EAS). 수동 트리거 전용 + EXPO_TOKEN 시크릿이 있을 때만.
+# 실제 설치 파일(TestFlight/APK)은 Expo 계정이 필요하므로 여기서 게이팅한다.
+name: Build mobile (EAS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "EAS build profile"
+        required: true
+        default: preview
+        type: choice
+        options: [preview, production]
+
+jobs:
+  build:
+    if: ${{ vars.EAS_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: EAS build
+        working-directory: apps/mobile
+        run: eas build --non-interactive --platform all --profile ${{ inputs.profile }}

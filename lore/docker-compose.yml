@@ -1,4 +1,7 @@
-# 로컬 개발용 Postgres. 동기화의 "원천"(진실의 유일한 출처는 아님, ADR-0003).
+# 로컬 풀스택 환경. `docker compose up --build`.
+#  postgres → migrate(한 번 실행) → web  순으로 뜬다.
+#  앱은 local-first라 web만으로도 동작하지만, 이 스택은 동기화 백엔드까지 포함한
+#  "프로덕션 유사 환경"을 로컬에서 재현한다(배포 파이프라인과 같은 이미지·마이그레이션).
 services:
   postgres:
     image: postgres:17-alpine
@@ -17,6 +20,36 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  # 스키마 마이그레이션(drizzle-kit). 배포 시 "웹 기동 전에 한 번" 돌리는 전략을 로컬에서 재현.
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: build
+    command: pnpm --filter @lore/db db:migrate
+    environment:
+      DATABASE_URL: postgresql://lore:lore@postgres:5432/lore
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: lore-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://lore:lore@postgres:5432/lore
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   lore-pgdata:

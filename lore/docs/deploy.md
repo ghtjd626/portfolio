@@ -1,47 +1,63 @@
-# Deploy — 배포 가이드
+# Delivery — 배포·운영
 
-Lore는 **local-first**라 배포가 두 단계로 나뉜다.
-1. **웹 앱** — 서버 없이도 완전히 동작(오프라인·IndexedDB). Vercel에 올리면 끝.
-2. **동기화 백엔드(선택)** — 여러 기기를 잇고 싶을 때만. Neon(Postgres)을 붙인다.
+배포의 *근거*는 [ADR-0010](./adr/0010-deployment-and-delivery-architecture.md). 여기선 *운영 방법*을 적는다.
 
-> 아래 계정 연결(Vercel 로그인, Neon 생성)은 소유자만 할 수 있다. 코드·설정·마이그레이션은 모두 준비돼 있어, **연결만 하면 뜬다.**
+> **핵심:** Lore는 local-first라 **클라이언트는 서버 없이 동작**한다. 그래서 배포가 두 층이다 —
+> (1) **정적 클라이언트**(어디든 올라감, 계정 불필요) (2) **동기화 백엔드**(다기기용, 선택).
 
----
+## 배포 타깃 한눈에
 
-## 1. 웹 앱 → Vercel (5분, 백엔드 불필요)
+| 타깃 | 무엇 | 계정 | 파이프라인 |
+|---|---|---|---|
+| **정적 클라이언트** | `apps/web-static` → CDN/GitHub Pages | 불필요(GITHUB_TOKEN) | `pages.yml` (자체 완결) |
+| **프로덕션 웹** | `apps/web`(Next) → Vercel + 동기화 API | Vercel | `deploy.yml` (게이팅) |
+| **컨테이너** | `apps/web/Dockerfile` → 자가호스팅 | 인프라 | `docker compose` |
+| **모바일** | `apps/mobile` → EAS(TestFlight/APK) | Expo | `mobile.yml` (수동) |
 
-1. [vercel.com](https://vercel.com) → **New Project** → GitHub의 `ghtjd626/Lore` import.
-2. **Root Directory** 를 `apps/web` 로 지정. (모노레포이므로 중요)
-   - Framework: Next.js (자동 감지)
-   - Install: `pnpm install --frozen-lockfile` · Build: `next build` (`apps/web/vercel.json`에 명시됨; pnpm 워크스페이스를 루트에서 해석)
-3. **Deploy.** 끝. 이 시점에서 앱은 **완전히 동작한다**(local-first). 프리셋·기록·다크모드 전부.
+## CI
 
-동기화는 아직 오프라인 상태로 남는다(서버 없음). 아래 2번을 하면 켜진다.
+`ci.yml` — push/PR마다: lint → schema-core 테스트 → **웹 빌드(Next, 타입체크 포함)** → **정적 클라이언트 빌드** → **모바일 타입체크**.
 
-## 2. 동기화 백엔드 → Neon (선택)
+## 1. 정적 클라이언트 → GitHub Pages (자체 완결)
 
-`/api/sync`(Drizzle push/pull + LWW)를 켜려면 Postgres가 필요하다. Neon(서버리스 Postgres)이 Vercel과 잘 맞는다.
+`pages.yml`이 `main` push 시 `apps/web-static`을 빌드해 Pages에 올린다. **토큰 불필요.**
+저장소에서 **Settings → Pages → Source: GitHub Actions** 한 번만 켜면 워크플로가 배포한다.
+→ `https://ghtjd626.github.io/Lore/`
 
-1. **Neon 프로젝트 생성** ([neon.tech](https://neon.tech)) → **pooled connection string** 복사
-   (`postgresql://user:pass@ep-xxx-pooler.../lore?sslmode=require`).
-2. **스키마 마이그레이션 적용** (로컬에서 1회):
-   ```bash
-   cd Lore
-   DATABASE_URL="<neon-pooled-url>" pnpm --filter @lore/db db:migrate
-   ```
-   (`packages/db/drizzle/0000_*.sql`이 적용된다.)
-3. **Vercel 환경변수**에 `DATABASE_URL = <neon-pooled-url>` 추가 → **Redeploy**.
-4. 이제 앱 설정 화면의 **"지금 동기화"** 가 실제로 push/pull 한다.
+로컬 확인:
+```bash
+pnpm --filter @lore/web-static build   # apps/web-static/dist
+pnpm --filter @lore/web-static preview  # http://localhost:4173
+```
 
-### 주의
-- `/api/sync`는 `runtime = "nodejs"`(postgres 드라이버가 edge 미지원).
-- `DATABASE_URL`이 없으면 라우트는 **503을 반환하고 앱은 조용히 오프라인으로 유지**된다(local-first라 안전).
-- 서버리스에서는 Neon **pooled** 엔드포인트를 써야 커넥션이 폭주하지 않는다.
+## 2. 프로덕션 웹 → Vercel (+ Neon)
 
-## 3. CI
+`deploy.yml`은 저장소 변수 `DEPLOY_ENABLED=true` + 시크릿이 있을 때만 동작(없으면 안전한 no-op).
 
-`.github/workflows/ci.yml`이 push/PR마다 lint·type-check·test를 돌린다. Vercel은 `main` push 시 자동 배포(레포 연결 시).
+1. **Neon**: 프로젝트 생성 → **pooled** connection string.
+2. **Vercel**: `Lore` import → Root Directory `apps/web`.
+3. **GitHub 시크릿/변수 설정**:
+   - Secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `DATABASE_URL`(Neon pooled)
+   - Variables: `DEPLOY_ENABLED=true`
+4. push → **마이그레이션(웹 기동 전) → 배포** 순으로 자동 실행.
+   - 마이그레이션 전략: 서버리스 콜드스타트가 아니라 **배포 잡에서 한 번**(`drizzle-kit migrate`).
 
-## 4. 모바일 앱
+## 3. 컨테이너 (자가호스팅)
 
-네이티브 앱 빌드/배포는 [`docs/app.md`](./app.md)(EAS) 참고.
+```bash
+docker compose up --build      # postgres → migrate → web  (http://localhost:3000)
+```
+- `apps/web/Dockerfile`: 멀티스테이지(Next `standalone`), 비루트 유저, `HEALTHCHECK`.
+- 로컬 검증 완료: `pnpm --filter @lore/web build` → `.next/standalone/apps/web/server.js` 산출.
+  (이 환경엔 Docker 데몬이 없어 이미지 빌드 자체는 미실행 — Dockerfile·compose는 표준 패턴.)
+
+## 4. 모바일 → EAS
+
+[app.md](./app.md) 참고. `mobile.yml`은 수동 트리거 + `EAS_ENABLED=true` + `EXPO_TOKEN` 시크릿일 때만.
+
+## 운영
+
+- **환경변수 검증:** `apps/web/lib/env.ts`(zod). 잘못된 설정은 부팅 시 fail-fast.
+- **헬스체크:** `GET /api/health` → `{status, db}`. DB 설정 시 연결까지(readiness) 확인, 실패 시 503.
+  `local-first`라 DB 미설정이어도 앱은 `status: ok`(db: not-configured).
+- **롤백:** Vercel은 이전 배포로 즉시 롤백(불변 배포). 정적은 이전 Pages 아티팩트로 재배포.

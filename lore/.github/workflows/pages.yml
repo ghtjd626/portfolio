@@ -1,0 +1,50 @@
+# 정적 클라이언트를 GitHub Pages에 배포 (ADR-0010의 "정적 배포 타깃").
+# local-first라 서버 없이 도는 클라이언트를 CDN처럼 Pages에 올린다. 계정/토큰 불필요(GITHUB_TOKEN).
+name: Deploy static client (Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build static client
+        run: pnpm --filter @lore/web-static build
+        env:
+          # 프로젝트 사이트 경로: https://<user>.github.io/Lore/
+          VITE_BASE: /Lore/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web-static/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,51 @@
+# 프로덕션 배포 (Vercel) + DB 마이그레이션.
+# 시크릿(VERCEL_*, DATABASE_URL)이 설정되고 저장소 변수 DEPLOY_ENABLED=true 일 때만 동작한다.
+#   → 시크릿 넣기 전엔 안전하게 no-op(항상 빨간불이 되지 않도록 게이팅).
+# 전략: "웹 기동 전에 마이그레이션을 먼저" 실행(서버리스 콜드스타트에서 돌리지 않는다).
+name: Deploy web (Vercel)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run DB migrations (before deploy)
+        run: pnpm --filter @lore/db db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  deploy:
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    needs: migrate
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+      - name: Pull Vercel env
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy
+        id: deploy
+        run: echo "url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,11 @@
+**/node_modules
+**/.next
+**/dist
+**/.expo
+**/.turbo
+**/.git
+**/coverage
+**/*.log
+**/*.tsbuildinfo
+apps/mobile
+apps/web-static

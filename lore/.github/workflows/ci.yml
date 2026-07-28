@@ -1,6 +1,5 @@
-# Lore CI — lint · type-check · test.
-# 주의: 이 워크플로는 lore/가 독립 레포의 "루트"가 됐을 때 동작한다.
-# (GitHub Actions는 레포 루트의 .github/workflows만 실행한다.)
+# CI — lint · test · build (web · static client · mobile 번들)
+# 독립 레포(ghtjd626/Lore)에서 push/PR마다 실행된다.
 name: CI
 
 on:
@@ -13,14 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm type-check
-      - run: pnpm lint
-      - run: pnpm test
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint (packages)
+        run: pnpm lint
+
+      - name: Unit tests (schema-core)
+        run: pnpm --filter @lore/schema-core test
+
+      - name: Build web (Next standalone, includes type-check)
+        run: pnpm --filter @lore/web build
+
+      - name: Build static client
+        run: pnpm --filter @lore/web-static build
+
+      - name: Type-check mobile
+        run: pnpm --filter @lore/mobile type-check
