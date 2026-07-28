@@ -8,8 +8,8 @@
 > **📍 현재 상태:** **웹 MVP + 네이티브 앱 + 배포 준비 완료.**
 > - Phase 0 완료 · Phase 2(사용자 정의 스키마) · Phase 3(뷰/UX + **네이티브 앱**) · Phase 4(프리셋) 대부분 달성.
 > - **네이티브 앱**(`apps/mobile`, Expo Router + expo-sqlite)이 `schema-core`를 웹과 공유하며 동작 — 번들·타입·RN-web 렌더로 검증([ADR-0009](./adr/0009-native-app-stack.md)).
-> - **Phase 5(배포)**는 설정·마이그레이션·가이드까지 준비 완료 — 계정 연결만 하면 배포([deploy.md](./deploy.md)).
-> - **남은 것:** Phase 1(관리형 동기화 엔진 스파이크·라이브 동기화), Tamagui 유니버설 UI 수렴, 실제 배포·스토어 제출(소유자 계정).
+> - **Phase 5(배포)**: 배포·딜리버리 아키텍처를 실제 구현 — 이중 빌드 타깃(정적 클라이언트 + Vercel SSR) · 컨테이너(Next standalone) · CI/CD(GitHub Actions) · env 검증 · 헬스체크 · 마이그레이션-우선([ADR-0010](./adr/0010-deployment-and-delivery-architecture.md)). 정적 클라이언트는 GitHub Pages로 자체 배포(Pages 소스 토글만 남음), 프로덕션 Vercel/Neon은 시크릿 연결만.
+> - **남은 것:** Phase 1(관리형 동기화 엔진 스파이크·라이브 동기화), Tamagui 유니버설 UI 수렴, 클라우드 계정 연결(Vercel/Neon/EAS/Pages 토글).
 >
 > 자세한 경계는 [mvp-buildlog](./mvp-buildlog.md).
 

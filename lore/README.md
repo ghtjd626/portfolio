@@ -63,7 +63,7 @@
 - **UX:** 반응형(모바일 하단 내비 / 데스크톱 사이드바) · 라이트/다크 · ₩ 통화 포맷 · 세그먼트 입력.
 - **풀스택:** `schema-core`(FieldDef→Zod, 테스트) · `db`(Drizzle 물리 스키마 + 마이그레이션 SQL) · `/api/sync`(push/pull+LWW).
 - **네이티브 앱:** `apps/mobile` — Expo Router + expo-sqlite, `schema-core`를 웹과 **같은 코드로 공유**. 번들·타입체크·react-native-web 렌더로 검증([ADR-0009](./docs/adr/0009-native-app-stack.md), [app.md](./docs/app.md)).
-- **배포 준비 완료:** Vercel + Neon 설정·마이그레이션·가이드 완비 — 계정 연결만 하면 뜬다([deploy.md](./docs/deploy.md)).
+- **배포·DevOps:** local-first라 배포가 두 층 — **정적 클라이언트**(`apps/web-static`, CDN/GitHub Pages, 계정 불필요) + **프로덕션 웹**(Vercel) + **컨테이너**(Next standalone Dockerfile). CI/CD(GitHub Actions), env 검증, `/api/health`, 마이그레이션-우선. 근거는 [ADR-0010](./docs/adr/0010-deployment-and-delivery-architecture.md), 운영은 [deploy.md](./docs/deploy.md).
 
 검증된 것과 코드/설계만 된 것의 경계는 [`docs/mvp-buildlog.md`](./docs/mvp-buildlog.md), 실행법은 [`docs/development.md`](./docs/development.md) · [`docs/app.md`](./docs/app.md).
 독립 레포: **[github.com/ghtjd626/Lore](https://github.com/ghtjd626/Lore)**. 남은 것은 동기화 엔진 스파이크([ADR-0003](./docs/adr/0003-sync-engine-spike.md))와 실제 배포·스토어 제출(계정 연결).
