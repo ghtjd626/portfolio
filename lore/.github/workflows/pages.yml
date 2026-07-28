@@ -33,6 +33,9 @@ jobs:
           # 프로젝트 사이트 경로: https://<user>.github.io/Lore/
           VITE_BASE: /Lore/
       - uses: actions/configure-pages@v5
+        with:
+          # 러너의 워크플로 토큰으로 Pages 자동 활성화 시도(성공 시 토글 불필요).
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web-static/dist
